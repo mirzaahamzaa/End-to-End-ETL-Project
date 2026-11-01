@@ -1,0 +1,80 @@
+{
+  "job_id": 611818322457544,
+  "name": "End-To-End-Pipeline",
+  "format": "MULTI_TASK",
+  "max_concurrent_runs": 1,
+  "timeout_seconds": 0,
+  "queue": {
+    "enabled": true
+  },
+  "performance_target": "PERFORMANCE_OPTIMIZED",
+  "environments": [
+    {
+      "environment_key": "Default",
+      "spec": {
+        "environment_version": "6"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "task_key": "Parameters",
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/parameters"
+    },
+    {
+      "task_key": "Bronze_Autoloader",
+      "depends_on": [
+        "Parameters"
+      ],
+      "for_each_notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Bronze_Layer",
+      "for_each_inputs": "{{tasks.Parameters.values.output_datasets}}"
+    },
+    {
+      "task_key": "Silver_Customers",
+      "depends_on": [
+        "Bronze_Autoloader"
+      ],
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Silver_Customers"
+    },
+    {
+      "task_key": "Silver_Orders",
+      "depends_on": [
+        "Bronze_Autoloader"
+      ],
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Silver_Orders"
+    },
+    {
+      "task_key": "Silver_Products",
+      "depends_on": [
+        "Bronze_Autoloader"
+      ],
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Silver_Products"
+    },
+    {
+      "task_key": "Gold_Customers",
+      "depends_on": [
+        "Silver_Customers",
+        "Silver_Orders",
+        "Silver_Products"
+      ],
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Gold_Customers"
+    },
+    {
+      "task_key": "Gold_Products",
+      "depends_on": [
+        "Silver_Customers",
+        "Silver_Orders",
+        "Silver_Products"
+      ],
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Gold_Products"
+    },
+    {
+      "task_key": "Fact_Orders",
+      "depends_on": [
+        "Gold_Customers",
+        "Gold_Products"
+      ],
+      "notebook_path": "/Workspace/Users/mirzaahamza1@outlook.com/Databricks ETE Project/Fact Orders"
+    }
+  ]
+}
